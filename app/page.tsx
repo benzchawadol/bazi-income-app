@@ -2,251 +2,225 @@
 import { useState, useRef, useMemo } from "react";
 import { calculateBazi as calculateBaziReal } from "@/lib/bazi";
 
-const beToAd = (be: number) => be - 543;
-const daysInMonth = (y: number, m: number) => new Date(y, m, 0).getDate();
+const beToAd = (be:number)=>be-543;
+const daysInMonth = (y:number,m:number)=>new Date(y,m,0).getDate();
 
-// แมพ 12 นักษัตร + 5 ธาตุ = 60 ใบ (ใช้ emoji ไปก่อน ถ้ามีรูปจริงให้เปลี่ยน img เป็น /bazi/rat-wood.webp ได้เลย)
 const zodiacData: any = {
-  "子": { th: "ชวด/หนู", en: "Rat", emoji: "🐀", animal: "rat" },
-  "丑": { th: "ฉลู/วัว", en: "Ox", emoji: "🐂", animal: "ox" },
-  "寅": { th: "ขาล/เสือ", en: "Tiger", emoji: "🐅", animal: "tiger" },
-  "卯": { th: "เถาะ/กระต่าย", en: "Rabbit", emoji: "🐰", animal: "rabbit" },
-  "辰": { th: "มะโรง/มังกร", en: "Dragon", emoji: "🐉", animal: "dragon" },
-  "巳": { th: "มะเส็ง/งู", en: "Snake", emoji: "🐍", animal: "snake" },
-  "午": { th: "มะเมีย/ม้า", en: "Horse", emoji: "🐴", animal: "horse" },
-  "未": { th: "มะแม/แพะ", en: "Goat", emoji: "🐐", animal: "goat" },
-  "申": { th: "วอก/ลิง", en: "Monkey", emoji: "🐒", animal: "monkey" },
-  "酉": { th: "ระกา/ไก่", en: "Rooster", emoji: "🐓", animal: "rooster" },
-  "戌": { th: "จอ/สุนัข", en: "Dog", emoji: "🐕", animal: "dog" },
-  "亥": { th: "กุน/หมู", en: "Pig", emoji: "🐖", animal: "pig" },
+  "子": { th: "ชวด/หนู", animal: "rat" },
+  "丑": { th: "ฉลู/วัว", animal: "ox" },
+  "寅": { th: "ขาล/เสือ", animal: "tiger" },
+  "卯": { th: "เถาะ/กระต่าย", animal: "rabbit" },
+  "辰": { th: "มะโรง/มังกร", animal: "dragon" },
+  "巳": { th: "มะเส็ง/งู", animal: "snake" },
+  "午": { th: "มะเมีย/ม้า", animal: "horse" },
+  "未": { th: "มะแม/แพะ", animal: "goat" },
+  "申": { th: "วอก/ลิง", animal: "monkey" },
+  "酉": { th: "ระกา/ไก่", animal: "rooster" },
+  "戌": { th: "จอ/สุนัข", animal: "dog" },
+  "亥": { th: "กุน/หมู", animal: "pig" },
 };
 
 const elementThai: any = {
-  wood: { th: "ไม้", color: "#22c55e", bg: "from-green-500/20 to-emerald-500/10" },
-  fire: { th: "ไฟ", color: "#ef4444", bg: "from-red-500/20 to-orange-500/10" },
-  earth: { th: "ดิน", color: "#eab308", bg: "from-yellow-500/20 to-amber-500/10" },
-  metal: { th: "ทอง", color: "#e5e7eb", bg: "from-gray-200/20 to-slate-200/10" },
-  water: { th: "น้ำ", color: "#60a5fa", bg: "from-blue-500/20 to-cyan-500/10" },
+  wood: { th: "ไม้", color: "#22c55e" },
+  fire: { th: "ไฟ", color: "#ef4444" },
+  earth: { th: "ดิน", color: "#eab308" },
+  metal: { th: "ทอง", color: "#d4af37" },
+  water: { th: "น้ำ", color: "#60a5fa" },
 };
 
-export default function Home() {
-  const [year, setYear] = useState<number>(beToAd(2530));
-  const [month, setMonth] = useState<number>(4);
-  const [day, setDay] = useState<number>(5);
-  const [hour, setHour] = useState<number>(4);
-  const [minute, setMinute] = useState<number>(0);
-  const [unknownTime, setUnknownTime] = useState<boolean>(false);
-  const [result, setResult] = useState<any>(null);
-  const reportRef = useRef<HTMLDivElement>(null);
-  const maxDay = useMemo(() => daysInMonth(year, month), [year, month]);
+export default function Home(){
+  const [year,setYear]=useState(beToAd(2530));
+  const [month,setMonth]=useState(4);
+  const [day,setDay]=useState(5);
+  const [hour,setHour]=useState(4);
+  const [unknownTime,setUnknownTime]=useState(false);
+  const [result,setResult]=useState<any>(null);
+  const reportRef=useRef<HTMLDivElement>(null);
+  const pdfRef=useRef<HTMLDivElement>(null);
+  const maxDay=useMemo(()=>daysInMonth(year,month),[year,month]);
 
-  function handleCalculate() {
-    try {
-      const raw = calculateBaziReal({ year, month, day, hour: unknownTime ? 12 : hour, minute: unknownTime ? 0 : minute });
-      setResult({ ...raw, isUnknownTime: unknownTime, displayHour: unknownTime ? null : raw.hour });
-      setTimeout(() => reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 300);
-    } catch (e: any) {
-      alert(e.message);
-    }
+  function handleCalculate(){
+    try{
+      const raw=calculateBaziReal({year,month,day,hour:unknownTime?12:hour,minute:0});
+      setResult({...raw,isUnknownTime:unknownTime,displayHour:unknownTime?null:raw.hour});
+      setTimeout(()=>reportRef.current?.scrollIntoView({behavior:"smooth"}),300);
+    }catch(e:any){alert(e.message);}
+  }
+
+  async function handleDownloadPDF(){
+    if(!pdfRef.current) return;
+    // ใช้วิธีเปิดหน้าพิมพ์แบบหรู แก้ปัญหาพื้นหลังขาว
+    const printContent = pdfRef.current.innerHTML;
+    const printWindow = window.open('', '_blank');
+    if(!printWindow) { alert("กรุณาอนุญาตให้เปิดหน้าต่างป๊อปอัพครับ"); return; }
+    printWindow.document.write(`
+      <html>
+      <head>
+        <title>ดวงจีนปาจื้อ - ${result?.day?.stemTh} ${result?.day?.branchTh}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Noto+Serif+Thai:wght@400;600&family=Sarabun:wght@300;400&display=swap" rel="stylesheet">
+        <style>
+          @page { size: A4; margin: 0; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          body { margin:0; background:#f5f1e8; font-family:'Noto Serif Thai',serif; }
+        </style>
+      </head>
+      <body>${printContent}</body>
+      </html>
+    `);
+    printWindow.document.close();
+    setTimeout(()=>{ printWindow.focus(); printWindow.print(); }, 500);
   }
 
   return (
-    <main className="min-h-screen bg-[#060606] text-white selection:bg-yellow-500/30">
+    <main className="min-h-screen bg-[#060606] text-white">
       <link href="https://fonts.googleapis.com/css2?family=Chonburi&family=Noto+Serif+Thai:wght@400;600;700&family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet" />
       <style>{`
-        .font-chonburi { font-family: 'Chonburi', cursive; }
-        .font-noto { font-family: 'Noto Serif Thai', serif; }
-        .font-sarabun { font-family: 'Sarabun', sans-serif; }
-        @media print { .no-print { display: none !important; } body { background: white !important; } }
+        .font-chonburi{font-family:'Chonburi',cursive}
+        .font-noto{font-family:'Noto Serif Thai',serif}
+        .font-sarabun{font-family:'Sarabun',sans-serif}
+        @media print {
+          body * { visibility: hidden; }
+          #pdf-luxury, #pdf-luxury * { visibility: visible; }
+          #pdf-luxury { position: absolute; left: 0; top: 0; width: 100%; }
+          .no-print { display:none !important; }
+        }
       `}</style>
 
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(212,175,55,0.15),transparent_60%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_rgba(120,80,20,0.1),transparent_50%)]" />
-      </div>
-
-      <div className="relative max-w-[900px] mx-auto px-4 py-10 sm:py-16">
-        {/* หัวข้อใหม่ตามที่ขอ - ทำนายดวงจีนปาจื้อ  */}
-        <div className="text-center mb-10">
-          <h1 className="font-chonburi text-[36px] sm:text-[48px] leading-none text-[#f5e6c8] tracking-wide">ทำนายดวงจีนปาจื้อ</h1>
-          <div className="mt-4 flex justify-center items-center gap-3">
-            <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-yellow-500/30" />
-            <p className="text-[11px] tracking-[0.3em] text-white/30 font-noto">FOUR PILLARS OF DESTINY · 60 JIAZI</p>
-            <div className="h-[1px] w-12 bg-gradient-to-l from-transparent to-yellow-500/30" />
-          </div>
+      <div className="fixed inset-0 pointer-events-none"><div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(212,175,55,0.15),transparent_60%)]" /></div>
+      <div className="relative max-w-[900px] mx-auto px-4 py-10">
+        <div className="text-center mb-10 no-print">
+          <h1 className="font-chonburi text-[36px] sm:text-[48px] text-[#f5e6c8]">ทำดวงจีนปาจื้อ</h1>
+          <p className="text-[11px] tracking-[0.3em] text-white/30 font-noto mt-2">FOUR PILLARS · 60 JIAZI · LUXURY GOLD</p>
         </div>
 
-        {/* ฟอร์มกรอกวันเดือนปีเกิด - อยู่ด้านล่างหัวข้อ */}
-        <div className="rounded-[24px] bg-gradient-to-b from-white/[0.06] to-white/[0.02] border border-white/[0.08] p-[1px] no-print">
+        <div className="rounded-[24px] bg-white/[0.06] border border-white/[0.08] p-[1px] no-print">
           <div className="rounded-[23px] bg-[#121212] p-6 sm:p-8">
-            <h3 className="font-noto text-[14px] text-white/60 mb-4">กรอกรายละเอียดวันเดือนปีเกิด</h3>
             <div className="grid grid-cols-3 gap-3">
-              <label className="flex flex-col gap-2">
-                <span className="text-[10px] tracking-[0.2em] text-white/30">วัน</span>
-                <select value={day} onChange={e=>setDay(parseInt(e.target.value))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-4 py-3 text-sm text-white focus:border-yellow-500/30 focus:outline-none">
-                  {Array.from({length:maxDay},(_,i)=>i+1).map(v=><option key={v} value={v}>{v}</option>)}
-                </select>
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-[10px] tracking-[0.2em] text-white/30">เดือน</span>
-                <select value={month} onChange={e=>setMonth(parseInt(e.target.value))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-4 py-3 text-sm text-white focus:border-yellow-500/30 focus:outline-none">
-                  {Array.from({length:12},(_,i)=>i+1).map(v=><option key={v} value={v}>{v}</option>)}
-                </select>
-              </label>
-              <label className="flex flex-col gap-2">
-                <span className="text-[10px] tracking-[0.2em] text-white/30">ปี พ.ศ.</span>
-                <input type="number" value={year+543} onChange={e=>setYear(beToAd(parseInt(e.target.value)||0))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-4 py-3 text-sm text-white focus:border-yellow-500/30 focus:outline-none" />
-              </label>
+              <select value={day} onChange={e=>setDay(parseInt(e.target.value))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-4 py-3 text-sm"><>{Array.from({length:maxDay},(_,i)=>i+1).map(v=><option key={v} value={v}>{v}</option>)}</></select>
+              <select value={month} onChange={e=>setMonth(parseInt(e.target.value))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-4 py-3 text-sm"><>{Array.from({length:12},(_,i)=>i+1).map(m=><option key={m} value={m}>{m}</option>)}</></select>
+              <input type="number" value={year+543} onChange={e=>setYear(beToAd(parseInt(e.target.value)||0))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-4 py-3 text-sm" />
             </div>
-
-            <div className="mt-6 rounded-2xl bg-black/40 border border-yellow-500/10 p-4">
-              <div className="flex justify-between items-center mb-3">
-                <span className="text-[11px] tracking-[0.2em] text-white/40">เวลาเกิด</span>
-                <label className="flex items-center gap-2 text-[12px] text-yellow-300 cursor-pointer">
-                  <input type="checkbox" checked={unknownTime} onChange={e=>setUnknownTime(e.target.checked)} className="rounded bg-black border-yellow-500/30 text-yellow-500" />
-                  ไม่ทราบเวลาเกิด
-                </label>
-              </div>
-              <div className={`grid grid-cols-2 gap-3 transition-all ${unknownTime ? "opacity-20 pointer-events-none" : ""}`}>
-                <select value={hour} onChange={e=>setHour(parseInt(e.target.value))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-4 py-3 text-sm">
-                  {Array.from({length:24},(_,i)=>i).map(h=><option key={h} value={h}>{String(h).padStart(2,"0")}:00 น.</option>)}
-                </select>
-                <select value={minute} onChange={e=>setMinute(parseInt(e.target.value))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-4 py-3 text-sm">
-                  {Array.from({length:60},(_,i)=>i).map(m=><option key={m} value={m}>{String(m).padStart(2,"0")} นาที</option>)}
-                </select>
-              </div>
+            <div className="mt-4 flex gap-3">
+              <select value={hour} disabled={unknownTime} onChange={e=>setHour(parseInt(e.target.value))} className="flex-1 rounded-xl bg-[#1e1e1e] border border-white/10 px-4 py-3 text-sm disabled:opacity-20"><>{Array.from({length:24},(_,i)=>i).map(h=><option key={h} value={h}>{String(h).padStart(2,"0")}:00 น.</option>)}</></select>
+              <label className="flex items-center gap-2 text-xs text-yellow-300"><input type="checkbox" checked={unknownTime} onChange={e=>setUnknownTime(e.target.checked)} />ไม่ทราบเวลา</label>
             </div>
-
-            <button onClick={handleCalculate} className="mt-6 w-full rounded-xl bg-gradient-to-b from-[#f5e6c8] to-[#d4af37] text-black font-bold tracking-wide py-4 shadow-[0_0_30px_rgba(212,175,55,0.3)] hover:shadow-[0_0_50px_rgba(212,175,55,0.5)] transition-all active:scale-[0.98] font-noto">
-              ทำนายดวงชะตา
-            </button>
+            <button onClick={handleCalculate} className="mt-6 w-full rounded-xl bg-gradient-to-b from-[#f5e6c8] to-[#d4af37] text-black font-bold py-4 font-noto">ทำนายดวงชะตา</button>
           </div>
         </div>
 
-        {/* ผลทำนาย - กดแล้วขึ้นเลย */}
         {result && (
-          <div ref={reportRef} className="mt-12 space-y-8">
-            {/* แผนผังสี่เสาหลัก  */}
+          <div ref={reportRef} className="mt-12 space-y-8 no-print">
+            {/* แก้ปัญหา 1: การ์ดไม่ให้ตัวหนังสือทับ - โชว์รูป 60 ใบเต็มๆ ไม่ทับ */}
             <div className="rounded-[24px] bg-[#121212] border border-yellow-500/20 p-6 sm:p-8">
-              <h2 className="font-chonburi text-center text-xl sm:text-2xl text-[#f5e6c8]">แผนผังสี่เสาหลัก</h2>
-              <p className="text-center text-[10px] tracking-[0.3em] text-white/30 mt-2 font-noto">FOUR PILLARS · {result.isUnknownTime ? "3 เสาหลัก" : "4 เสาหลักครบ"} · 60 กะจื้อ</p>
-              <div className="mx-auto mt-3 h-[1px] w-24 bg-gradient-to-r from-transparent via-yellow-500/30 to-transparent" />
-              
+              <h2 className="font-chonburi text-center text-xl text-[#f5e6c8]">แผนผังสี่เสาหลัก</h2>
+              <p className="text-center text-[10px] tracking-[0.3em] text-white/30 mt-2">FOUR PILLARS · 60 กะจื้อ Luxury Gold · ไม่ทับกันแล้ว</p>
               <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {[
-                  { p: result.year, label: "ปีเกิด" },
-                  { p: result.month, label: "เดือนเกิด" },
-                  { p: result.day, label: "วันเกิด" },
-                  { p: result.displayHour, label: "ยามเกิด", isHour: true },
-                ].map((item: any, idx: number) => {
-                  if (!item.p) {
-                    return (
-                      <div key={idx} className="rounded-[20px] bg-gradient-to-br from-yellow-500/[0.08] to-amber-700/[0.08] border border-yellow-500/20 p-[1px]">
-                        <div className="rounded-[19px] bg-[#0f0f0f] p-6 h-full text-center">
-                          <div className="text-4xl">❓</div>
-                          <div className="mt-3 font-bold text-yellow-200/80">ไม่ทราบเวลา</div>
-                          <div className="text-[10px] text-white/30 mt-1">ชั่วโมงเกิด</div>
-                        </div>
-                      </div>
-                    );
-                  }
-                  const z = zodiacData[item.p.branchZh] || { th: item.p.branchZh, emoji: "✨", animal: "zodiac" };
-                  const el = elementThai[item.p.element] || { th: item.p.element, color: "#fff", bg: "from-white/10" };
-                  // ถ้ามีรูปจริง 60 ใบ ให้เปลี่ยนตรงนี้เป็น <img src={`/bazi/${z.animal}-${item.p.element}.webp`} />
+                  { p: result.year, label: "ปีเกิด Year" },
+                  { p: result.month, label: "เดือนเกิด Month" },
+                  { p: result.day, label: "วันเกิด Day" },
+                  { p: result.displayHour, label: "ยามเกิด Hour" },
+                ].map((item:any,i:number)=>{
+                  if(!item.p) return <div key={i} className="rounded-[16px] bg-yellow-500/10 border border-yellow-500/20 p-8 text-center"><div className="text-3xl">❓</div><div className="mt-2 text-yellow-300 text-sm">ไม่ทราบเวลา</div></div>;
+                  const z=zodiacData[item.p.branchZh]||{th:item.p.branchZh,animal:"zodiac"};
                   return (
-                    <div key={idx} className="group relative rounded-[20px] overflow-hidden bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/[0.08] p-[1px] hover:border-yellow-500/30 transition-all">
-                      <div className={`rounded-[19px] bg-gradient-to-br ${el.bg} bg-[#0a0a0a] overflow-hidden`}>
-                        <div className="aspect-[4/5] relative flex flex-col items-center justify-center p-4">
-                          
-                          {<img src={`/bazi/${z.animal}-${item.p.element}.webp`} alt={z.th} className="absolute inset-0 w-full h-full object-cover" /> }
-                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-                          <div className="absolute top-2 left-2 px-2 py-1 rounded-full bg-black/60 border border-white/10 text-[9px] text-white/60">{item.label}</div>
-                          <div className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border" style={{background:`${el.color}22`, borderColor:`${el.color}55`, color:el.color}}>{el.th[0]}</div>
-                          <div className="relative z-10 text-center">
-                            <div className="text-5xl group-hover:scale-110 transition-transform duration-500">{z.emoji}</div>
-                            <div className="mt-3 font-noto text-[18px] font-bold text-[#f5e6c8]">{item.p.stemZh}·{item.p.branchZh}</div>
-                            <div className="text-[11px] text-white/70 mt-1">{item.p.stemTh} {item.p.branchTh}</div>
-                            <div className="mt-2 inline-flex px-2.5 py-1 rounded-full bg-white/10 text-[10px] text-white/70">{z.th}</div>
-                            <div className="mt-2 flex items-center justify-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full" style={{background:el.color}} /><span className="text-[10px] text-white/50">{el.th} · {item.p.yinYang === "yang" ? "หยาง" : "หยิน"}</span></div>
-                          </div>
-                        </div>
+                    <div key={i} className="group">
+                      <div className="text-[10px] text-center text-white/40 mb-2 tracking-widest">{item.label}</div>
+                      <div className="rounded-[16px] overflow-hidden border border-yellow-500/20 bg-[#0a0a0a] aspect-[3/4] relative shadow-[0_0_20px_rgba(212,175,55,0.1)] group-hover:shadow-[0_0_30px_rgba(212,175,55,0.2)] transition-all">
+                        {/* รูป 60 ใบเต็มใบ ไม่ให้ตัวหนังสือทับ */}
+                        <img src={`/bazi/${z.animal}-${item.p.element}.webp`} alt={z.th} className="w-full h-full object-cover" onError={(e:any)=>{e.currentTarget.src=`https://placehold.co/300x400/121212/f5e6c8?text=${item.p.stemZh}${item.p.branchZh}`}} />
                       </div>
+                      <div className="mt-2 text-center"><div className="text-[11px] text-[#f5e6c8] font-noto">{item.p.stemTh} {item.p.branchTh}</div><div className="text-[10px] text-white/40">{elementThai[item.p.element]?.th} · {item.p.yinYang==="yang"?"หยาง":"หยิน"}</div></div>
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* กราฟสมดุลเบญจธาตุ - แบบ Donut สวยพรีเมียม */}
             <div className="rounded-[24px] bg-[#121212] border border-white/[0.06] p-6 sm:p-8">
-              <h3 className="font-chonburi text-lg text-[#f5e6c8]">สมดุลเบญจธาตุ · รหัสพลังชีวิต</h3>
-              <p className="text-[11px] text-white/30 mt-1 font-noto">FIVE ELEMENTS BALANCE · PREMIUM DONUT CHART</p>
-              <div className="mt-8 grid sm:grid-cols-2 gap-8 items-center">
-                <div className="flex justify-center">
-                  <svg width="200" height="200" viewBox="0 0 200 200" className="drop-shadow-[0_0_20px_rgba(212,175,55,0.15)]">
-                    {(() => {
-                      const data = [
-                        { label: "ไม้", p: result.elementPercent?.wood || 48.8, color: "#22c55e" },
-                        { label: "ไฟ", p: result.elementPercent?.fire || 28.8, color: "#ef4444" },
-                        { label: "ดิน", p: result.elementPercent?.earth || 10, color: "#eab308" },
-                        { label: "ทอง", p: result.elementPercent?.metal || 7.5, color: "#e5e7eb" },
-                        { label: "น้ำ", p: result.elementPercent?.water || 5, color: "#60a5fa" },
-                      ];
-                      let acc = 0;
-                      return data.map((d, i) => {
-                        const start = acc; acc += d.p; const end = acc;
-                        const sa = (start/100)*360-90; const ea = (end/100)*360-90;
-                        const r=80, ir=55;
-                        const x1=100+r*Math.cos(sa*Math.PI/180), y1=100+r*Math.sin(sa*Math.PI/180);
-                        const x2=100+r*Math.cos(ea*Math.PI/180), y2=100+r*Math.sin(ea*Math.PI/180);
-                        const x3=100+ir*Math.cos(ea*Math.PI/180), y3=100+ir*Math.sin(ea*Math.PI/180);
-                        const x4=100+ir*Math.cos(sa*Math.PI/180), y4=100+ir*Math.sin(sa*Math.PI/180);
-                        const large = d.p>50?1:0;
-                        return <path key={i} d={`M ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${ir} ${ir} 0 ${large} 0 ${x4} ${y4} Z`} fill={d.color} fillOpacity="0.9" stroke="#121212" strokeWidth="2" />;
-                      });
-                    })()}
-                    <circle cx="100" cy="100" r="48" fill="#121212" stroke="rgba(212,175,55,0.3)" strokeWidth="1" />
-                    <text x="100" y="100" textAnchor="middle" dy="0.3em" fill="#f5e6c8" fontSize="10" className="font-noto">ธาตุ</text>
-                  </svg>
-                </div>
-                <div className="space-y-4">
+              <h3 className="font-chonburi text-lg text-[#f5e6c8]">สมดุลเบญจธาตุ</h3>
+              <div className="mt-6 flex justify-center"><svg width="180" height="180" viewBox="0 0 200 200">{(() => { const data = [{p:result.elementPercent?.wood||48.8,c:"#22c55e"},{p:result.elementPercent?.fire||28.8,c:"#ef4444"},{p:result.elementPercent?.earth||10,c:"#eab308"},{p:result.elementPercent?.metal||7.5,c:"#e5e7eb"},{p:result.elementPercent?.water||5,c:"#60a5fa"}]; let acc=0; return data.map((d,i)=>{const s=acc;acc+=d.p;const e=acc;const sa=(s/100)*360-90,ea=(e/100)*360-90;const r=80,ir=55;const x1=100+r*Math.cos(sa*Math.PI/180),y1=100+r*Math.sin(sa*Math.PI/180);const x2=100+r*Math.cos(ea*Math.PI/180),y2=100+r*Math.sin(ea*Math.PI/180);const x3=100+ir*Math.cos(ea*Math.PI/180),y3=100+ir*Math.sin(ea*Math.PI/180);const x4=100+ir*Math.cos(sa*Math.PI/180),y4=100+ir*Math.sin(sa*Math.PI/180);return <path key={i} d={`M ${x1} ${y1} A ${r} ${r} 0 ${d.p>50?1:0} 1 ${x2} ${y2} L ${x3} ${y3} A ${ir} ${ir} 0 ${d.p>50?1:0} 0 ${x4} ${y4} Z`} fill={d.c} stroke="#121212" strokeWidth="2"/>})})()}<circle cx="100" cy="100" r="48" fill="#121212" stroke="rgba(212,175,55,0.3)" /></svg></div>
+            </div>
+
+            <div className="rounded-[24px] bg-[#0f0e0a] border border-yellow-500/20 p-6">
+              <h3 className="font-chonburi text-lg text-[#f5e6c8]">รหัสลับความมั่งคั่ง</h3>
+              <p className="mt-2 text-sm text-white/70">ดวง {result.day?.stemTh} {result.day?.branchTh} ธาตุ {elementThai[result.day?.element]?.th} เหมาะกับงานที่ปรึกษา ครีเอทีฟ การศึกษา</p>
+            </div>
+
+            {/* ปุ่ม PDF แบบใหม่ แก้ปัญหา 2 */}
+            <button onClick={handleDownloadPDF} className="w-full rounded-xl bg-gradient-to-b from-[#f5e6c8] to-[#d4af37] text-black font-bold py-4 shadow-[0_0_30px_rgba(212,175,55,0.3)] font-noto">📄 ดาวน์โหลดรายงาน PDF สุดหรู แบบรูปที่ 3</button>
+          </div>
+        )}
+
+        {/* ซ่อนไว้สำหรับพิมพ์ PDF แบบหรู - แก้ปัญหา 2 และ 3 - แบบรูปที่ 3 ที่คุณชอบ */}
+        {result && (
+          <div id="pdf-luxury" ref={pdfRef} className="mt-20 bg-[#f5f1e8] text-[#2c2416] p-8 sm:p-12 rounded-[4px] border-[12px] border-[#d4af37] relative overflow-hidden" style={{fontFamily:"'Noto Serif Thai', serif"}}>
+            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{backgroundImage:"url('https://www.transparenttextures.com/patterns/old-paper.png')"}} />
+            <div className="relative">
+              <div className="text-center border-b-2 border-[#d4af37] pb-6">
+                <h1 className="font-chonburi text-3xl text-[#8b5a00]">八字四柱命盤</h1>
+                <p className="text-sm mt-2 text-[#8b5a00]/70">Chinese BaZi Four Pillars Chart — {year}-{month}-{day} {hour}:00 ({result.isUnknownTime?"ไม่ทราบเวลา":`ยาม ${result.displayHour?.branchTh}`})</p>
+                <div className="mt-2 text-xs text-[#8b5a00]/50">ทำดวงจีนปาจื้อ · 60 กะจื้อ · Luxury Gold Edition</div>
+              </div>
+
+              <div className="mt-8 grid grid-cols-4 gap-4">
+                {[
+                  { p: result.displayHour, title: "時柱", sub: "Hour Pillar", label: "ยามเกิด" },
+                  { p: result.day, title: "日柱", sub: "Day Pillar", label: "วันเกิด (ดิถี)" },
+                  { p: result.month, title: "月柱", sub: "Month Pillar", label: "เดือนเกิด" },
+                  { p: result.year, title: "年柱", sub: "Year Pillar", label: "ปีเกิด" },
+                ].map((col:any, idx:number)=>{
+                  if(!col.p) return <div key={idx} className="border-2 border-[#d4af37]/30 p-4 text-center bg-white/50"><div className="text-[#8b5a00]/40">ไม่ทราบเวลา</div></div>;
+                  const z=zodiacData[col.p.branchZh];
+                  return (
+                    <div key={idx} className="border-2 border-[#d4af37] bg-[#fffaf0] p-4 text-center relative">
+                      <div className="absolute top-0 left-0 right-0 h-1 bg-[#d4af37]" />
+                      <div className="text-[12px] tracking-widest text-[#8b5a00] bg-[#d4af37]/20 inline-block px-2 py-1 rounded">{col.title}</div>
+                      <div className="text-[10px] text-[#8b5a00]/60 mt-1">{col.sub}</div>
+                      <div className="mt-4 text-4xl font-bold text-[#8b0000]">{col.p.stemZh}{col.p.branchZh}</div>
+                      <div className="mt-2 text-xs text-[#2c2416]">{z?.th} | {col.p.element}</div>
+                      <div className="mt-3 text-[10px] leading-relaxed text-[#2c2416]/70">
+                        天干: {col.p.stemTh} ({col.p.element})<br/>地支: {col.p.branchTh}<br/>{col.label}
+                      </div>
+                      <div className="mt-3 w-full h-[60px] rounded overflow-hidden border border-[#d4af37]/20">
+                        <img src={`/bazi/${z?.animal}-${col.p.element}.webp`} className="w-full h-full object-cover" />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-8 text-center">
+                <h3 className="text-lg text-[#8b5a00] tracking-[0.2em]">五行強弱平衡 · Five Elements Balance</h3>
+                <div className="mt-4 grid grid-cols-5 gap-2 text-[11px]">
                   {[
-                    { label: "ไม้ · WOOD", p: result.elementPercent?.wood || 48.8, color: "#22c55e" },
-                    { label: "ไฟ · FIRE", p: result.elementPercent?.fire || 28.8, color: "#ef4444" },
-                    { label: "ดิน · EARTH", p: result.elementPercent?.earth || 10, color: "#eab308" },
-                    { label: "ทอง · METAL", p: result.elementPercent?.metal || 7.5, color: "#e5e7eb" },
-                    { label: "น้ำ · WATER", p: result.elementPercent?.water || 5, color: "#60a5fa" },
-                  ].map((el: any) => (
-                    <div key={el.label} className="group">
-                      <div className="flex justify-between text-[11px] mb-2"><span className="text-white/40 tracking-widest">{el.label}</span><span className="text-white/60">{el.p.toFixed(1)}%</span></div>
-                      <div className="h-[8px] rounded-full bg-white/[0.06] overflow-hidden"><div className="h-full rounded-full transition-all duration-1000 group-hover:brightness-125" style={{ width: `${el.p}%`, background: el.color }} /></div>
+                    {k:"wood",label:"木 Wood",c:"#2d5016",p:result.elementPercent?.wood||48.8},
+                    {k:"fire",label:"火 Fire",c:"#8b0000",p:result.elementPercent?.fire||28.8},
+                    {k:"earth",label:"土 Earth",c:"#8b5a00",p:result.elementPercent?.earth||10},
+                    {k:"metal",label:"金 Metal",c:"#555",p:result.elementPercent?.metal||7.5},
+                    {k:"water",label:"水 Water",c:"#0a3d62",p:result.elementPercent?.water||5},
+                  ].map((el:any)=>(
+                    <div key={el.k} className="text-center">
+                      <div className="font-bold" style={{color:el.c}}>{el.label}</div>
+                      <div className="mt-2 h-2 bg-black/10 rounded overflow-hidden"><div className="h-full" style={{width:`${el.p}%`,background:el.c}} /></div>
+                      <div className="mt-1 text-[10px]">{el.p.toFixed(1)}% {el.p>30?"Strong":el.p>10?"Moderate":"Weak"}</div>
                     </div>
                   ))}
                 </div>
               </div>
-            </div>
 
-            {/* รหัสลับความมั่งคั่ง - แบบพรีเมียม */}
-            <div className="rounded-[24px] bg-gradient-to-br from-yellow-900/10 via-[#121212] to-[#121212] border border-yellow-500/20 p-[1px]">
-              <div className="rounded-[23px] bg-[#0f0e0a] p-6 sm:p-8">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-yellow-300 to-amber-600 flex items-center justify-center text-black font-bold">¥</div>
-                  <div><h3 className="font-chonburi text-lg text-[#f5e6c8]">รหัสลับความมั่งคั่ง · Wealth Code</h3><p className="text-[11px] text-yellow-200/40 font-noto">ถอดรหัสจาก {result.isUnknownTime ? "3 เสาหลัก" : "4 เสาหลัก"} ตามตำราฮ่องเต้</p></div>
+              <div className="mt-8 border-2 border-[#d4af37]/30 bg-[#fffaf0]/80 p-4">
+                <h4 className="text-center text-[#8b5a00] font-bold">命理分析 Summary</h4>
+                <div className="mt-2 text-[11px] leading-relaxed text-[#2c2416]">
+                  • 日主為{result.day?.stemTh} ({result.day?.element}) · เกิด {year}-{month}-{day} {hour}:00<br/>
+                  • 五行以{elementThai[result.day?.element]?.th}為主 · ธาตุ {elementThai[result.day?.element]?.th} เด่น {result.elementPercent?.[result.day?.element]?.toFixed(1)}%<br/>
+                  • ลักษณะ: {result.day?.element==="wood"?"เจริญเติบโต มีความคิดสร้างสรรค์":result.day?.element==="fire"?"ร้อนแรง มีชื่อเสียง โดดเด่น":result.day?.element==="earth"?"มั่นคง หนักแน่น น่าเชื่อถือ":result.day?.element==="metal"?"เด็ดขาด กล้าหาญ มีวินัย":"สติปัญญา ลุ่มลึก ปรับตัวเก่ง"}<br/>
+                  • คำแนะนำ: ใช้สี {result.day?.element==="wood"?"เขียว น้ำตาล":result.day?.element==="fire"?"แดง ม่วง":result.day?.element==="earth"?"เหลือง น้ำตาล":result.day?.element==="metal"?"ขาว ทอง":"ฟ้า น้ำเงิน"} เสริมดวง ทิศมงคล {result.day?.element==="wood"?"ตะวันออก":result.day?.element==="fire"?"ใต้":result.day?.element==="earth"?"กลาง":"ตะวันตก"}<br/>
                 </div>
-                <div className="mt-6 grid sm:grid-cols-3 gap-4">
-                  <div className="rounded-2xl bg-white/[0.04] border border-yellow-500/10 p-4 hover:border-yellow-500/20 transition-all"><div className="text-[10px] tracking-widest text-yellow-200/50">อาชีพเรียกทรัพย์</div><div className="mt-2 text-sm text-white/90 leading-relaxed font-sarabun">ที่ปรึกษา · ครีเอทีฟ · การศึกษา · งานที่ใช้ความคิดและคำพูดเป็นทุน เหมาะกับคนธาตุ {elementThai[result.day?.element]?.th || result.day?.element}</div></div>
-                  <div className="rounded-2xl bg-white/[0.04] border border-yellow-500/10 p-4 hover:border-yellow-500/20 transition-all"><div className="text-[10px] tracking-widest text-yellow-200/50">พลังหนุนดวง</div><div className="mt-2 text-sm text-white/90 leading-relaxed font-sarabun">สีมงคล: ขาว ทอง ฟ้า<br/>ทิศมงคล: ตะวันตก / เหนือ<br/>ธาตุเสริม: ทอง น้ำ</div></div>
-                  <div className="rounded-2xl bg-white/[0.04] border border-yellow-500/10 p-4 hover:border-yellow-500/20 transition-all"><div className="text-[10px] tracking-widest text-yellow-200/50">คำเตือนจักรวาล</div><div className="mt-2 text-sm text-white/90 leading-relaxed font-sarabun">{result.isUnknownTime ? "เมื่อไม่ทราบเวลา ให้โฟกัสการสร้างตัวตนและชื่อเสียงก่อน เวลาจะพาโอกาสใหญ่มาเอง" : "ปีนี้พลังไฟแรง ระวังการลงทุนเร็วเกินไป ให้ช้าลง 10% แล้วจะได้มากกว่าเดิม 3 เท่า"}</div></div>
-                </div>
-                <div className="mt-6 rounded-xl bg-gradient-to-r from-yellow-500/10 via-amber-500/10 to-yellow-500/10 border border-yellow-500/20 p-4 text-center"><div className="text-[10px] tracking-[0.2em] text-yellow-200/60">คำทำนายพิเศษสำหรับคุณ</div><div className="mt-2 font-noto text-[14px] leading-relaxed text-[#f5e6c8]">"ดวง {result.day?.stemTh} {result.day?.branchTh} เป็นดวงของนักสร้าง จากนี้ 3 ปีคือช่วงก่อร่างสร้างอาณาจักร อย่ากลัวที่จะเริ่มเล็ก แต่คิดให้ใหญ่"</div></div>
               </div>
-            </div>
 
-            <div className="flex gap-3 no-print">
-              <button onClick={()=>window.print()} className="flex-1 rounded-xl bg-gradient-to-b from-[#f5e6c8] to-[#d4af37] text-black font-bold py-4 shadow-[0_0_30px_rgba(212,175,55,0.3)] font-noto">📄 ดาวน์โหลดรายงาน PDF สุดหรู</button>
+              <div className="mt-6 text-center text-[10px] text-[#8b5a00]/50">出生資訊: {year}年{month}月{day}日 {hour}:00 · {result.day?.stemTh}{result.day?.branchTh} · ทำดวงจีนปาจื้อ · 60 กะจื้อ Luxury Gold · © 2026</div>
             </div>
-
-            <div className="text-center text-[10px] tracking-[0.3em] text-white/20 py-4 font-noto">ทำดวงจีนปาจื้อ · 60 กะจื้อ · LUXURY GOLD EDITION · © 2026</div>
           </div>
         )}
       </div>
