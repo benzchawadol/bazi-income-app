@@ -157,8 +157,8 @@ export default function Home() {
                     <div key={idx} className="group relative rounded-[20px] overflow-hidden bg-gradient-to-br from-white/[0.08] to-white/[0.02] border border-white/[0.08] p-[1px] hover:border-yellow-500/30 transition-all">
                       <div className={`rounded-[19px] bg-gradient-to-br ${el.bg} bg-[#0a0a0a] overflow-hidden`}>
                         <div className="aspect-[4/5] relative flex flex-col items-center justify-center p-4">
-                          {/* ถ้ามีรูป 60 ใบ ให้เปิดคอมเมนต์ img ข้างล่างนี้ */}
-                          {/* <img src={`/bazi/${z.animal}-${item.p.element}.webp`} alt={z.th} className="absolute inset-0 w-full h-full object-cover" /> */}
+                          
+                          {<img src={`/bazi/${z.animal}-${item.p.element}.webp`} alt={z.th} className="absolute inset-0 w-full h-full object-cover" /> }
                           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
                           <div className="absolute top-2 left-2 px-2 py-1 rounded-full bg-black/60 border border-white/10 text-[9px] text-white/60">{item.label}</div>
                           <div className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border" style={{background:`${el.color}22`, borderColor:`${el.color}55`, color:el.color}}>{el.th[0]}</div>
