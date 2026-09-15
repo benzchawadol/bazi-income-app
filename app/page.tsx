@@ -68,7 +68,7 @@ export default function Home() {
       <div className="relative max-w-[900px] mx-auto px-4 py-10 sm:py-16">
         {/* หัวข้อใหม่ตามที่ขอ - ทำนายดวงจีนปาจื้อ  */}
         <div className="text-center mb-10">
-          <h1 className="font-chonburi text-[36px] sm:text-[48px] leading-none text-[#f5e6c8] tracking-wide">ทำดวงจีนปาจื้อ</h1>
+          <h1 className="font-chonburi text-[36px] sm:text-[48px] leading-none text-[#f5e6c8] tracking-wide">ทำนายดวงจีนปาจื้อ</h1>
           <div className="mt-4 flex justify-center items-center gap-3">
             <div className="h-[1px] w-12 bg-gradient-to-r from-transparent to-yellow-500/30" />
             <p className="text-[11px] tracking-[0.3em] text-white/30 font-noto">FOUR PILLARS OF DESTINY · 60 JIAZI</p>
