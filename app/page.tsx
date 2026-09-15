@@ -139,7 +139,7 @@ export default function Home() {
           </label>
           <div className="flex gap-2">
             <label className="flex flex-col gap-1 text-sm text-parchment-200 flex-1">
-              ชั่วโมง
+              เวลาเกิด (ชั่วโมง)
               <select
                 value={hour}
                 onChange={(e) => setHour(parseInt(e.target.value, 10))}
@@ -153,7 +153,7 @@ export default function Home() {
               </select>
             </label>
             <label className="flex flex-col gap-1 text-sm text-parchment-200 flex-1">
-              นาที
+              นาทีเกิด
               <select
                 value={minute}
                 onChange={(e) => setMinute(parseInt(e.target.value, 10))}
