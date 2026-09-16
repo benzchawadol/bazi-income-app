@@ -19,7 +19,7 @@ return(<main className="min-h-screen bg-[#060606] text-white"><div className="ma
 <div className="grid grid-cols-3 gap-2">
 <select value={d} onChange={e=>setD(e.target.value===''? '': Number(e.target.value))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-3 py-3 text-sm text-white"><option value="">วัน</option>{Array.from({length:max},(_,i)=>i+1).map(v=><option key={v} value={v}>{v}</option>)}</select>
 <select value={mo} onChange={e=>setMo(e.target.value===''? '': Number(e.target.value))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-3 py-3 text-sm text-white"><option value="">เดือน</option>{Array.from({length:12},(_,i)=>i+1).map(v=><option key={v} value={v}>{v}</option>)}</select>
-<select value={y} onChange={e=>setY(e.target.value===''? '': Number(e.target.value))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-3 py-3 text-sm text-white"><option value="">ปี พ.ศ.</option>{Array.from({length:80},(_,i)=>2560-i).map(be=><option key={be} value={be-543}>{be}</option>)}</select>
+<select value={y} onChange={e=>setY(e.target.value===''? '': Number(e.target.value))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-3 py-3 text-sm text-white"><option value="">ปี พ.ศ.</option>{Array.from({length:100},(_,i)=>2569-i).map(be=><option key={be} value={be-543}>{be}</option>)}</select>
 </div>
 <div className="mt-3 grid grid-cols-2 gap-2">
 <select value={h} disabled={ut} onChange={e=>setH(e.target.value===''? '': Number(e.target.value))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-3 py-3 text-sm text-white disabled:opacity-20"><option value="">ชั่วโมง</option>{Array.from({length:24},(_,i)=>i).map(v=><option key={v} value={v}>{String(v).padStart(2,"0")} น.</option>)}</select>
