@@ -3,6 +3,7 @@ import { useState, useRef, useMemo } from "react";
 import { calculateBazi } from "@/lib/bazi";
 const dm=(y:number,m:number)=>new Date(y,m,0).getDate();
 const zd:any={"子":{th:"ชวด",a:"rat"},"丑":{th:"ฉลู",a:"ox"},"寅":{th:"ขาล",a:"tiger"},"卯":{th:"เถาะ",a:"rabbit"},"辰":{th:"มะโรง",a:"dragon"},"巳":{th:"มะเส็ง",a:"snake"},"午":{th:"มะเมีย",a:"horse"},"未":{th:"มะแม",a:"goat"},"申":{th:"วอก",a:"monkey"},"酉":{th:"ระกา",a:"rooster"},"戌":{th:"จอ",a:"dog"},"亥":{th:"กุน",a:"pig"}};
+const lifePathMean:any={1:"ผู้นำ กล้าลุย เริ่มธุรกิจเองได้",2:"นักประสาน เป็นที่ปรึกษา",3:"นักสื่อสาร คอนเทนต์ ครีเอทีฟ",4:"นักวางระบบ ระเบียบ บัญชี",5:"นักเดินทาง เปลี่ยนแปลงเร็ว",6:"นักดูแล งานบริการ",7:"นักวิเคราะห์ ชอบขุดลึก ความรู้เฉพาะทาง ที่ปรึกษา วางระบบ",8:"นักบริหารเงิน ธุรกิจใหญ่",9:"นักให้ ผู้สอน"};
 export default function Home(){
 const [y,setY]=useState<any>('');const [mo,setMo]=useState<any>('');const [d,setD]=useState<any>('');const [h,setH]=useState<any>('');const [mi,setMi]=useState<any>('');const [ut,setUt]=useState(false);
 const [r,setR]=useState<any>(null);const rr=useRef<HTMLDivElement>(null);
@@ -13,7 +14,7 @@ if(y===''||mo===''||d===''){alert("เลือก วัน เดือน ป
 if(!ut&&(h===''||mi==='')){alert("เลือก ชั่วโมง นาที หรือติ๊กไม่ทราบเวลา");return;}
 try{const raw=calculateBazi({year:Number(y),month:Number(mo),day:Number(d),hour:ut?12:Number(h),minute:ut?0:Number(mi)});const l=lp(Number(d),Number(mo),Number(y));setR({...raw,ut,dh:ut?null:raw.hour,lp:l,dy:Number(d),mo:Number(mo),yr:Number(y),hr:ut?null:Number(h),mn:ut?null:Number(mi)});setTimeout(()=>rr.current?.scrollIntoView({behavior:"smooth"}),300);}catch(e:any){alert(e.message);}}
 return(<main className="min-h-screen bg-[#060606] text-white"><div className="max-w-[900px] mx-auto px-4 py-8">
-<div className="text-center mb-6"><h1 className="text-[36px] font-bold text-[#f5e6c8]">ทำดวงจีนปาจื้อ</h1></div>
+<div className="text-center mb-6"><h1 className="text-[36px] font-bold text-[#f5e6c8]">ทำนายดวงจีนปาจื้อ</h1></div>
 <div className="rounded-[24px] bg-white/[0.06] border border-white/10 p-[1px]"><div className="rounded-[23px] bg-[#121212] p-5">
 <div className="grid grid-cols-3 gap-2">
 <select value={d} onChange={e=>setD(e.target.value===''? '': Number(e.target.value))} className="rounded-xl bg-[#1e1e1e] border border-white/10 px-3 py-3 text-sm text-white"><option value="">วัน</option>{Array.from({length:max},(_,i)=>i+1).map(v=><option key={v} value={v}>{v}</option>)}</select>
@@ -30,9 +31,51 @@ return(<main className="min-h-screen bg-[#060606] text-white"><div className="ma
 {r && (
 <div ref={rr} className="mt-8 space-y-6">
 <div className="rounded-[24px] bg-[#121212] border border-yellow-500/20 p-5"><h2 className="text-center text-[#f5e6c8]">แผนผังสี่เสาหลัก</h2><div className="mt-4 grid grid-cols-4 gap-2">{[{p:r.year,l:"ปี"},{p:r.month,l:"เดือน"},{p:r.day,l:"วัน"},{p:r.dh,l:"ยาม"}].map((it:any,i:number)=>{if(!it.p)return <div key={i} className="rounded-xl bg-yellow-500/10 p-4 text-center text-xs">ไม่ทราบเวลา</div>;const z=zd[it.p.branchZh];return <div key={i}><div className="text-[9px] text-center text-white/30">{it.l}</div><div className="rounded-xl overflow-hidden border border-yellow-500/20 aspect-[3/4] bg-black"><img src={`/bazi/${z.a}-${it.p.element}.webp`} className="w-full h-full object-cover" /></div><div className="text-center text-[10px] text-[#f5e6c8] mt-1">{it.p.stemZh}{it.p.branchZh}</div></div>;})}</div></div>
+
 <div className="rounded-[24px] bg-[#121212] border border-white/[0.06] p-6"><h3 className="text-center text-[#f5e6c8] font-bold">สมดุลเบญจธาตุ · พลัง 5 ธาตุ</h3><div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-8"><div><svg width="180" height="180" viewBox="0 0 200 200">{(()=>{const data=[{p:r.elementPercent?.wood||0,c:"#22c55e"},{p:r.elementPercent?.fire||0,c:"#ef4444"},{p:r.elementPercent?.earth||0,c:"#eab308"},{p:r.elementPercent?.metal||0,c:"#e5e7eb"},{p:r.elementPercent?.water||0,c:"#60a5fa"}];let acc=0;return data.map((d,i)=>{const s=acc;acc+=d.p;const e=acc;if(d.p<=0)return null;const sa=(s/100)*360-90,ea=(e/100)*360-90;const ro=80,ri=50;const x1=100+ro*Math.cos(sa*Math.PI/180),y1=100+ro*Math.sin(sa*Math.PI/180);const x2=100+ro*Math.cos(ea*Math.PI/180),y2=100+ro*Math.sin(ea*Math.PI/180);const x3=100+ri*Math.cos(ea*Math.PI/180),y3=100+ri*Math.sin(ea*Math.PI/180);const x4=100+ri*Math.cos(sa*Math.PI/180),y4=100+ri*Math.sin(sa*Math.PI/180);const large=d.p>50?1:0;return <path key={i} d={`M ${x1} ${y1} A ${ro} ${ro} 0 ${large} 1 ${x2} ${y2} L ${x3} ${y3} A ${ri} ${ri} 0 ${large} 0 ${x4} ${y4} Z`} fill={d.c} stroke="#121212" strokeWidth="2"/>});})()}<circle cx="100" cy="100" r="42" fill="#121212" stroke="rgba(212,175,55,0.3)" /><text x="100" y="100" textAnchor="middle" dy="0.3em" fill="#f5e6c8" fontSize="11">ธาตุ</text></svg></div><div className="space-y-3 w-full sm:w-[260px]">{[{k:"wood",th:"ไม้",c:"#22c55e",p:r.elementPercent?.wood||0},{k:"fire",th:"ไฟ",c:"#ef4444",p:r.elementPercent?.fire||0},{k:"earth",th:"ดิน",c:"#eab308",p:r.elementPercent?.earth||0},{k:"metal",th:"ทอง",c:"#e5e7eb",p:r.elementPercent?.metal||0},{k:"water",th:"น้ำ",c:"#60a5fa",p:r.elementPercent?.water||0}].map((el:any)=>(<div key={el.k}><div className="flex justify-between text-[11px]"><span className="text-white/50">{el.th}</span><span className="text-white/70">{el.p.toFixed(1)}%</span></div><div className="mt-1 h-[6px] bg-white/10 rounded-full overflow-hidden"><div className="h-full rounded-full" style={{width:`${el.p}%`,background:el.c}} /></div></div>))}</div></div></div>
-<div className="rounded-[24px] bg-[#f5f1e8] text-[#2c2416] p-6 border-[6px] border-[#d4af37]"><h2 className="text-xl text-[#8b5a00] text-center font-bold">วิเคราะห์ดวงชะตาของคุณ</h2><p className="text-center text-[11px] text-[#8b5a00]/60 mt-1">{r.dy}/{r.mo}/{r.yr+543} {r.hr!==null?`${String(r.hr).padStart(2,"0")}:${String(r.mn).padStart(2,"0")} น. ยาม ${r.dh?.branchTh}`:"ไม่ทราบเวลา"}</p><div className="mt-4 space-y-3 text-[13px] leading-[1.7]"><div className="bg-white p-3 rounded-xl border"><b>ข้อมูลดวง:</b> {r.year?.stemZh}{r.year?.branchZh}年 {r.month?.stemZh}{r.month?.branchZh}月 {r.day?.stemZh}{r.day?.branchZh}日 {r.dh?.stemZh}{r.dh?.branchZh}時 - ปี {r.year?.branchTh} เดือน {r.month?.branchTh} วัน {r.day?.branchTh} ยาม {r.dh?.branchTh}</div><div className="bg-[#fffaf0] p-3 rounded-xl border"><b>1. Life Path {r.lp}:</b> {r.dy}+{r.mo}+{r.yr}={r.dy+r.mo+r.yr}={r.lp} - เลข {r.lp} นักวิเคราะห์ ชอบขุดลึก</div><div className="bg-[#fffaf0] p-3 rounded-xl border"><b>2. สายธาตุ - ธาตุ{r.day?.stemTh} {r.day?.element}</b> - ไม้ {(r.elementPercent?.wood||0).toFixed(1)}% ไฟ {(r.elementPercent?.fire||0).toFixed(1)}% ดิน {(r.elementPercent?.earth||0).toFixed(1)}% ทอง {(r.elementPercent?.metal||0).toFixed(1)}% น้ำ {(r.elementPercent?.water||0).toFixed(1)}%</div><div className="bg-white p-3 rounded-xl border"><b>การงาน:</b> ไม้เยอะต้องมีทองมาตัด รุ่งเมื่อมีกรอบชัด KPI ระบบ<br/><b>การเงิน:</b> {r.month?.branchTh} คลังเงิน หาเงินเก่งเก็บยาก ต้องทำบัญชี แยกกระเป๋า<br/><b>วิธีปรับธาตุ:</b> เติมน้ำทอง สีขาว เทา ดำ น้ำเงิน ทิศเหนือ ตะวันตก</div></div></div>
-<div className="rounded-[24px] bg-gradient-to-br from-[#1a1508] to-[#0f0e0a] border border-yellow-500/30 p-[1px]"><div className="rounded-[23px] bg-[#121212] p-6 text-center"><h3 className="text-[#f5e6c8] font-bold text-lg">อยากรู้ลึกกว่านี้ใช่ไหม?</h3><p className="text-[13px] text-white/60 mt-2">ยังมี <b className="text-[#d4af37]">12 เข็มทิศชีวิต (12 Compass)</b> วิเคราะห์ลึกถึง อาชีพที่ใช่ คู่ที่เสริม ทิศทางเงิน โชคลาภ 10 ปีข้างหน้า</p><div className="mt-5 rounded-xl bg-gradient-to-b from-[#f5e6c8] to-[#d4af37] p-[1px]"><a href="https://lin.ee/Qtt1m4cC" target="_blank" className="block rounded-[11px] bg-gradient-to-b from-[#f5e6c8] to-[#d4af37] text-black font-bold py-4 text-center">📲 แอดไลน์ ดู 12 เข็มทิศชีวิตแบบละเอียด คลิกเลย</a></div><p className="text-[10px] text-white/30 mt-3">แก้ https://lin.ee/Qtt1m4cC เป็นลิงก์ไลน์ของคุณ เช่น https://line.me/ti/p/@yourid</p></div></div>
+
+<div className="rounded-[24px] bg-[#f5f1e8] text-[#2c2416] p-6 border-[6px] border-[#d4af37]">
+<h2 className="text-xl text-[#8b5a00] text-center font-bold">วิเคราะห์ดวงชะตาของคุณ</h2>
+<p className="text-center text-[11px] text-[#8b5a00]/60 mt-1">{r.dy}/{r.mo}/{r.yr+543} {r.hr!==null?`${String(r.hr).padStart(2,"0")}:${String(r.mn).padStart(2,"0")} น. ยาม ${r.dh?.branchTh}`:"ไม่ทราบเวลา"} - {r.year?.stemZh}{r.year?.branchZh} {r.month?.stemZh}{r.month?.branchZh} {r.day?.stemZh}{r.day?.branchZh} {r.dh?.stemZh}{r.dh?.branchZh}</p>
+
+<div className="mt-6 space-y-4 text-[14px] leading-[1.8]">
+<div className="bg-white p-4 rounded-xl border border-[#d4af37]/30">
+<b className="text-[#8b5a00]">### ข้อมูลดวงที่ได้</b><br/>
+ตามปฏิทินจีน วันเกิดคุณคือ <b className="text-[#8b0000]">{r.year?.stemZh}{r.year?.branchZh}年 {r.month?.stemZh}{r.month?.branchZh}月 {r.day?.stemZh}{r.day?.branchZh}日 {r.dh?.stemZh}{r.dh?.branchZh}時</b> พอรวมเวลาตี {r.hr} ซึ่งเป็นยาม{r.dh?.branchTh} จะได้เวลาครบ 4 เสาเป็น<br/><br/>
+<span className="font-bold text-[#8b0000]">ปี: {r.year?.stemZh}{r.year?.branchZh} {r.year?.branchTh} {zd[r.year?.branchZh]?.th} ธาตุ{r.year?.element} / เดือน: {r.month?.stemZh}{r.month?.branchZh} {r.month?.branchTh} {zd[r.month?.branchZh]?.th} ธาตุ{r.month?.element} / วัน: {r.day?.stemZh}{r.day?.branchZh} {r.day?.branchTh} {zd[r.day?.branchZh]?.th} ธาตุ{r.day?.element} / เวลา: {r.dh?`${r.dh?.stemZh}${r.dh?.branchZh} ${r.dh?.branchTh} ${zd[r.dh?.branchZh]?.th} ธาตุ${r.dh?.element}`:"ไม่ทราบเวลา"}</span><br/><br/>
+ถ้าเรียกแบบซาจูเกาหลีก็คืออันเดียวกันเลยครับ แค่คนเกาหลีจะเรียก Saju
+</div>
+
+<div className="bg-[#fffaf0] p-4 rounded-xl border border-[#d4af37]/20">
+<b className="text-[#8b5a00]">### 1. เลขศาสตร์ - Life Path {r.lp}</b><br/>
+{r.dy} + {r.mo} + {r.yr} = {r.dy+r.mo+r.yr} = {r.lp} คุณเป็นเลข {r.lp} {lifePathMean[r.lp]} งานที่ได้เงินดีของคุณจะมาจากความรู้เฉพาะทาง การเป็นที่ปรึกษา วางระบบ ไม่ใช่ขายแบบหว่านๆ<br/><br/>
+คนเลข 7 จะรุ่งเมื่อคุณเป็นผู้เชี่ยวชาญเฉพาะเรื่อง คนอื่นต้องมาถามคุณ ไม่ใช่คุณไปวิ่งหาลูกค้า งานของคุณต้องมีความลึก ไม่ใช่กว้าง
+</div>
+
+<div className="bg-[#fffaf0] p-4 rounded-xl border border-[#d4af37]/20">
+<b className="text-[#8b5a00]">### 2. สายธาตุ - คุณคือคนธาตุ{r.day?.stemTh} {r.day?.element==="wood"?"甲木 ต้นไม้ใหญ่":""} ({r.day?.element})</b><br/>
+วันเกิด <b>{r.day?.stemZh}{r.day?.branchZh}</b> คือ Day Master เป็น {r.day?.element} {r.day?.yinYang==="yang"?"หยาง แข็ง ตรง โตเร็ว":"หยิน อ่อนโยน ยืดหยุ่น"} - {r.day?.element==="wood"?"ต้นไม้ใหญ่ โตเร็ว คิดริเริ่ม":""}<br/><br/>
+ธาตุในดวงคุณตอนนี้:<br/>
+- <b>ไม้ เยอะมาก {(r.elementPercent?.wood||0).toFixed(1)}%</b> - คุณมีความคิดริเริ่มสูง โตเร็ว แต่บางทีทำหลายอย่างพร้อมกัน ต้องมีทองมาตัดให้เป็นชิ้นงาน ไม่งั้นจะโตแบบเถาวัลย์พันกัน<br/>
+- <b>ไฟ แรง {(r.elementPercent?.fire||0).toFixed(1)}%</b> - 丁 กับ 丙 ทำให้ไม้มีไฟส่องสว่าง คือไอเดียเยอะ นำเสนอเก่ง คนเห็น เป็นดาวแสดงตัว ทำให้คนอื่นเห็นความสามารถของคุณ<br/>
+- <b>ดิน {(r.elementPercent?.earth||0).toFixed(1)}%</b> - {r.month?.branchZh==="辰"?"辰 เป็นคลังเก็บเงินของคุณ แต่มีแค่ตัวเดียว ต้องเปิดคลังให้ถูกจังหวะ ถ้าเปิดผิดจังหวะเงินจะรั่ว":"ดินเป็นคลังเงิน แต่มีน้อย เก็บเงินยาก ต้องสร้างคลังเพิ่ม"}<br/>
+- <b>ทอง {(r.elementPercent?.metal||0).toFixed(1)}%</b> - {r.day?.branchZh==="申"?"申 มีทองอย่างเดียว เป็นตัวตัดแต่งไม้ให้เป็นเฟอร์นิเจอร์ คือระเบียบ วินัย กฎหมาย การเงิน":"ทองคือตัวตัดไม้ให้เป็นรูปร่าง คือวินัย ระบบ"}<br/>
+- <b>น้ำ อ่อน {(r.elementPercent?.water||0).toFixed(1)}%</b> - น้ำคือปัญญาและการไหลของเงินในดวงนี้อ่อน ต้องเติมด้วยการเรียนรู้และการสื่อสาร การเดินทาง<br/><br/>
+</div>
+
+<div className="bg-white p-4 rounded-xl border border-[#d4af37]/30">
+<b className="text-[#8b5a00]">การงาน:</b> ไม้เยอะแบบนี้ต้องมีทองมาตัด คุณจะรุ่งเมื่องานมีกรอบชัด มี KPI มีระบบ ไม่ใช่งานอิสระลอยๆ งานที่ถูกโฉลกคือ งานใช้ไม้+ไฟ = การศึกษา คอนเทนต์ ที่ปรึกษา วางแผน ออกแบบ งานใช้ทองมาช่วย = งานที่เกี่ยวกับการจัดการ ตรวจสอบ บัญชี กฎหมาย หรือเอาความรู้ไปทำเป็นคอร์ส เป็นระบบ งานที่ได้เงินดีคือเอาความรู้เฉพาะทางมาทำเป็นระบบให้คนอื่นใช้<br/><br/>
+<b className="text-[#8b5a00]">การเงิน:</b> {zd[r.month?.branchZh]?.th} ({r.month?.branchZh}) ในเดือนเป็นคลังเงิน แต่ไม้เยอะไปขุดคลังออกมาใช้เรื่อยๆ ทำให้หาเงินเก่งแต่เก็บยาก จังหวะเงินจะมาจากโปรเจกต์ใหญ่ ไม่ใช่เงินเล็กๆ เรื่อยๆ ต้องมีดินและทองมาช่วยล็อก คือต้องทำบัญชี แยกกระเป๋าเงิน ทำระบบออมอัตโนมัติ เงินจะมาเป็นก้อนแล้วหายไป ถ้าไม่ล็อกไว้<br/><br/>
+<b className="text-[#8b5a00]">วิธีปรับธาตุให้สมดุลแบบจีน/ซาจูแนะนำกัน</b><br/>
+- เติม <b>น้ำ</b> กับ <b>ทอง</b>: สีที่เสริมคือ ขาว เทา ดำ น้ำเงิน ใส่เสื้อโทนนี้เวลาคุยงานเงิน จะช่วยให้เก็บเงินอยู่<br/>
+- ทิศที่เสริมคือทิศเหนือและทิศตะวันตก เวลาทำงานหันไปทิศนี้ หรือเลือกโต๊ะทำงานทิศนี้<br/>
+- งานที่เสริมน้ำคือ งานที่ใช้การไหล การสื่อสาร การเดินทาง การวิเคราะห์ข้อมูล งานที่เกี่ยวกับน้ำ การเงิน การไหลเวียน<br/><br/>
+ช่วงนี้อายุ {new Date().getFullYear()-r.yr} ย่าง {new Date().getFullYear()-r.yr+1} ตามหลักซาจูจะเข้าวัยที่ทองเริ่มมีบทบาทเยอะขึ้น คือเป็นวัยที่ต้องเปลี่ยนจากคนลงมือทำเอง ไปเป็นคนวางระบบให้คนอื่นทำต่อ จะเหนื่อยน้อยลงแต่เงินนิ่งขึ้น เป็นจังหวะที่ดีในการสร้างระบบ
+</div>
+</div>
+</div>
+
+<div className="rounded-[24px] bg-gradient-to-br from-[#1a1508] to-[#0f0e0a] border border-yellow-500/30 p-[1px]"><div className="rounded-[23px] bg-[#121212] p-6 text-center"><h3 className="text-[#f5e6c8] font-bold text-lg">อยากรู้ลึกกว่านี้ใช่ไหม?</h3><p className="text-[13px] text-white/60 mt-2 leading-relaxed">นี่เป็นแค่ภาพรวม 4 เสาหลักเท่านั้น<br/>ยังมี <b className="text-[#d4af37]">12 เข็มทิศชีวิต (12 Compass)</b> ที่วิเคราะห์ลึกถึง อาชีพที่ใช่ คู่ที่เสริม ทิศทางเงิน โชคลาภ และจังหวะชีวิต 10 ปีข้างหน้า</p><div className="mt-5 rounded-xl bg-gradient-to-b from-[#f5e6c8] to-[#d4af37] p-[1px]"><a href="https://lin.ee/Qtt1m4cC" target="_blank" className="block rounded-[11px] bg-gradient-to-b from-[#f5e6c8] to-[#d4af37] text-black font-bold py-4 text-center">📲 แอดไลน์ ดู 12 เข็มทิศชีวิตแบบละเอียด คลิกเลย</a></div></div></div>
 </div>
 )}
 </div></main>
