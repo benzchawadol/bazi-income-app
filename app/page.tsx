@@ -152,13 +152,14 @@ if(fire>=30) return `ดวงคุณไฟ${lvl(fire)} ${fire.toFixed(1)}% �
 return `ดวงคุณธาตุ${r.day?.element}เด่น และธาตุ${strongest.k}เป็นธาตุเด่นสุดที่ ${strongest.v.toFixed(1)}% ซึ่งถือว่า${lvl(strongest.v)} คุณเหมาะกับงานที่ใช้จุดแข็งธาตุ${strongest.k}นี้เป็นหลัก`;
 })()}</div></div>
 <div className="mt-6"><div className="font-bold">การเงินของคุณเป็นแบบนี้นะครับ</div><div className="mt-2 text-[13px] leading-[1.8]">{(()=>{
-const earth=r.elementPercent?.earth||0;
-const monthName=zd[r.month?.branchZh]?.th;
+const elTh:any={wood:"ไม้",fire:"ไฟ",earth:"ดิน",metal:"ทอง",water:"น้ำ"};
+const wealthEl = (Object.entries(r.tenGodByElement||{}) as any[]).find(([,v]:any)=>v==="wealth")?.[0];
+const wealthPct = wealthEl ? (r.elementPercent?.[wealthEl]||0) : 0;
 const entries = Object.entries(r.elementPercent).map(([k,v]:any)=>({k,v:v as number})).sort((a,b)=>b.v-a.v);
-const earthRank = entries.findIndex(e=>e.k==="earth")+1;
-if(earth>=20) return `เดือนเกิดของคุณคือ ${monthName} ซึ่งเป็นคลังเงินของคุณเลยครับ และดินของคุณ ${earth.toFixed(1)}% ถือว่าแข็งแรง เป็นอันดับ ${earthRank} ของดวงเลย เก็บเงินเก่งนะ มีความมั่นคงทางการเงิน`;
-if(earth>=10) return `เดือนเกิดของคุณคือ ${monthName} ซึ่งเป็นคลังเงิน ดินของคุณ ${earth.toFixed(1)}% เป็นอันดับ ${earthRank} พอดีๆ คุณหาเงินเก่งแต่ระวังใช้จ่าย เงินมักจะมาเป็นก้อนใหญ่ๆ`;
-return `เดือนเกิดของคุณคือ ${monthName} ซึ่งเป็นคลังเงิน แต่ดินของคุณตอนนี้ ${earth.toFixed(1)}% น้อยมาก เป็นอันดับ ${earthRank} น้อยสุดเลย คลังเล็ก เก็บยาก ต้องสร้างระบบออมอัตโนมัติ`;
+const wealthRank = entries.findIndex(e=>e.k===wealthEl)+1;
+if(wealthPct>=25) return `ธาตุที่สัมพันธ์กับพลังด้านทรัพย์ของคุณคือธาตุ${elTh[wealthEl]||wealthEl} มีสัดส่วน ${wealthPct.toFixed(1)}% อยู่ในอันดับ ${wealthRank} จาก 5 ธาตุ ถือว่าเด่นชัดในดวงคุณ`;
+if(wealthPct>=12) return `ธาตุที่สัมพันธ์กับพลังด้านทรัพย์ของคุณคือธาตุ${elTh[wealthEl]||wealthEl} มีสัดส่วน ${wealthPct.toFixed(1)}% อยู่ในอันดับ ${wealthRank} จาก 5 ธาตุ ถือว่าค่อนข้างเด่นในดวงคุณ`;
+return `ธาตุที่สัมพันธ์กับพลังด้านทรัพย์ของคุณคือธาตุ${elTh[wealthEl]||wealthEl} มีสัดส่วน ${wealthPct.toFixed(1)}% อยู่ในอันดับ ${wealthRank} จาก 5 ธาตุ ถือว่ามีอยู่บ้างในดวงคุณ`;
 })()}</div></div>
 <div className="mt-6 p-5 bg-[#fffaf0] rounded-xl border"><div className="font-bold text-[#8b5a00]">วิธีปรับสมดุลเฉพาะดวงคุณเลยครับ ผมตั้งใจเขียนให้คุณโดยเฉพาะเลยนะ</div><div className="mt-4 space-y-4 text-[13px] leading-[1.8]">{(()=>{
 const wood=r.elementPercent?.wood||0,fire=r.elementPercent?.fire||0,earth=r.elementPercent?.earth||0,metal=r.elementPercent?.metal||0,water=r.elementPercent?.water||0;
