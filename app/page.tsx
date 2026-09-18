@@ -142,9 +142,9 @@ const wealthEl = (Object.entries(r.tenGodByElement||{}) as any[]).find(([,v]:any
 const wealthPct = wealthEl ? (r.elementPercent?.[wealthEl]||0) : 0;
 const entries = Object.entries(r.elementPercent).map(([k,v]:any)=>({k,v:v as number})).sort((a,b)=>b.v-a.v);
 const wealthRank = entries.findIndex(e=>e.k===wealthEl)+1;
-if(wealthPct>=25) return `ธาตุที่สัมพันธ์กับพลังด้านทรัพย์ของคุณคือธาตุ${elTh[wealthEl]||wealthEl} มีสัดส่วน ${wealthPct.toFixed(1)}% อยู่ในอันดับ ${wealthRank} จาก 5 ธาตุ ถือว่าเด่นชัดในดวงคุณ`;
-if(wealthPct>=12) return `ธาตุที่สัมพันธ์กับพลังด้านทรัพย์ของคุณคือธาตุ${elTh[wealthEl]||wealthEl} มีสัดส่วน ${wealthPct.toFixed(1)}% อยู่ในอันดับ ${wealthRank} จาก 5 ธาตุ ถือว่าค่อนข้างเด่นในดวงคุณ`;
-return `ธาตุที่สัมพันธ์กับพลังด้านทรัพย์ของคุณคือธาตุ${elTh[wealthEl]||wealthEl} มีสัดส่วน ${wealthPct.toFixed(1)}% อยู่ในอันดับ ${wealthRank} จาก 5 ธาตุ ถือว่ามีอยู่บ้างในดวงคุณ`;
+if(wealthPct>=25) return `ธาตุที่สัมพันธ์กับพลังด้านทรัพย์ของคุณคือธาตุ${elTh[wealthEl]||wealthEl} มีสัดส่วน ${wealthPct.toFixed(1)}% อยู่ในอันดับ ${wealthRank} จาก 5 ธาตุ จึงถือว่าเรื่องทรัพย์เป็นพลังที่ค่อนข้างเด่นของดวง การวิเคราะห์เรื่องเงินให้ละเอียดกว่านี้ควรดูร่วมกับองค์ประกอบอื่นของดวงด้วยครับ`;
+if(wealthPct>=12) return `ธาตุที่สัมพันธ์กับพลังด้านทรัพย์ของคุณคือธาตุ${elTh[wealthEl]||wealthEl} มีสัดส่วน ${wealthPct.toFixed(1)}% อยู่ในอันดับ ${wealthRank} จาก 5 ธาตุ จึงถือว่าเรื่องทรัพย์อยู่ในระดับปานกลางของดวง การวิเคราะห์เรื่องเงินให้ละเอียดกว่านี้ควรดูร่วมกับองค์ประกอบอื่นของดวงด้วยครับ`;
+return `ธาตุที่สัมพันธ์กับพลังด้านทรัพย์ของคุณคือธาตุ${elTh[wealthEl]||wealthEl} มีสัดส่วน ${wealthPct.toFixed(1)}% อยู่ในอันดับ ${wealthRank} จาก 5 ธาตุ จึงถือว่าพลังด้านทรัพย์ไม่ได้เป็นจุดเด่นของดวง การวิเคราะห์เรื่องเงินให้ละเอียดกว่านี้ควรดูร่วมกับองค์ประกอบอื่นของดวงด้วยครับ`;
 })()}</div></div>
 <div className="mt-6 p-5 bg-[#fffaf0] rounded-xl border"><div className="font-bold text-[#8b5a00]">วิธีปรับสมดุลตามธาตุในดวงคุณ</div><div className="mt-4 space-y-4 text-[13px] leading-[1.8]">{getBalanceTips(r.elementPercent).map((t,i)=><div key={i} className="bg-white p-4 rounded-lg border leading-[1.8]">• {t}</div>)}</div></div>
 </div></div></div>
