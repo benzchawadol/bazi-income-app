@@ -49,17 +49,50 @@ function topElementByRole(result: BaziResult, role: TenGod): { element: Element;
   return { element: match[0], percent: result.elementPercent[match[0]] };
 }
 
+type CareerRole = "output" | "resource" | "authority";
+
+// Same 25% / 12% cutoffs already used for the wealth level in buildFinanceSummary,
+// reused here so "high/mid/low" means the same thing everywhere in this file.
+function roleImpactLevel(percent: number): "high" | "mid" | "low" {
+  if (percent >= 25) return "high";
+  if (percent >= 12) return "mid";
+  return "low";
+}
+
+const LEVEL_LABEL: Record<"high" | "mid" | "low", string> = {
+  high: "เด่นชัด",
+  mid: "ค่อนข้างเด่น",
+  low: "อยู่บ้าง",
+};
+
+const ROLE_NOTE_TEMPLATE: Record<
+  CareerRole,
+  (levelLabel: string, elementLabel: string, percent: number) => string
+> = {
+  output: (level, el, pct) =>
+    `มีความคิดสร้างสรรค์และความสามารถในการแสดงออก${level} รายได้มักมาจากฝีมือ ทักษะ หรือผลงานของตนเอง (ธาตุ${el} ${pct}% ของผัง)`,
+  resource: (level, el, pct) =>
+    `ได้รับการสนับสนุนจากผู้ใหญ่ ครูบาอาจารย์ หรือโอกาสด้านการศึกษา/ความรู้${level} ช่วยเสริมความมั่นคงในอาชีพ (ธาตุ${el} ${pct}% ของผัง)`,
+  authority: (level, el, pct) =>
+    `มีแรงกดดันด้านหน้าที่การงานหรือกฎระเบียบ${level} แต่หากบริหารจัดการดีจะช่วยเสริมตำแหน่งหน้าที่และความก้าวหน้า (ธาตุ${el} ${pct}% ของผัง)`,
+};
+
+function buildRoleNote(role: CareerRole, element: Element, percent: number): string {
+  const level = LEVEL_LABEL[roleImpactLevel(percent)];
+  return ROLE_NOTE_TEMPLATE[role](level, ELEMENT_TH_SHORT[element], percent);
+}
+
 export function buildCareerSummary(result: BaziResult): string {
   const base = CAREER_BY_DAY_MASTER[result.dayMaster.element];
-  const roles: TenGod[] = ["output", "resource", "authority"];
-  let strongest: { role: TenGod; percent: number } | null = null;
+  const roles: CareerRole[] = ["output", "resource", "authority"];
+  let strongest: { role: CareerRole; element: Element; percent: number } | null = null;
   for (const r of roles) {
     const t = topElementByRole(result, r);
     if (t && (!strongest || t.percent > strongest.percent)) {
-      strongest = { role: r, percent: t.percent };
+      strongest = { role: r, element: t.element, percent: t.percent };
     }
   }
-  const extra = strongest ? " " + TEN_GOD_NOTE[strongest.role] : "";
+  const extra = strongest ? " " + buildRoleNote(strongest.role, strongest.element, strongest.percent) : "";
   return base + extra;
 }
 
