@@ -145,10 +145,11 @@ return rank===1 ? "(เด่นสุดอันดับ 1)" : rank===5 ? "(�
 const wood=r.elementPercent?.wood||0,metal=r.elementPercent?.metal||0,water=r.elementPercent?.water||0,fire=r.elementPercent?.fire||0;
 const entries = Object.entries(r.elementPercent).map(([k,v]:any)=>({k,v:v as number})).sort((a,b)=>b.v-a.v);
 const strongest = entries[0];
-if(wood>=30 && metal<12) return `คุณเป็นคนไม้เด่น ${wood.toFixed(1)}% แต่ทองน้อย ${metal.toFixed(1)}% คุณไอเดียเยอะมากแต่ขาดตัวตัดให้เป็นชิ้นงาน คุณเคยรู้สึกไหมว่าทำหลายอย่างพร้อมกันแต่ไม่เสร็จ? คุณจะรุ่งเมื่องานมีกรอบชัด มี KPI ชัดเจน`;
-if(water>=30) return `ดวงคุณน้ำเด่น ${water.toFixed(1)}% เป็นอันดับ 1 ของดวงเลย คุณฉลาด ปรับตัวเก่ง เหมาะกับงานสื่อสาร เดินทาง วิเคราะห์ข้อมูล งานที่ต้องปรับตัวบ่อยๆ`;
-if(fire>=30) return `ดวงคุณไฟเด่น ${fire.toFixed(1)}% เป็นอันดับ 1 เลย คุณโดดเด่น มีเสน่ห์มาก เหมาะกับงานขาย พรีเซนต์ ออกหน้ากล้อง`;
-return `ดวงคุณธาตุ${r.day?.element}เด่น และธาตุ${strongest.k}เด่นสุด ${strongest.v.toFixed(1)}% คุณเหมาะกับงานที่ใช้จุดแข็งธาตุ${strongest.k}นี้เป็นหลัก`;
+const lvl=(p:number)=>p>=25?"เด่นชัด":p>=12?"ค่อนข้างเด่น":"มีอยู่บ้าง";
+if(wood>=30 && metal<12) return `คุณเป็นคนไม้${lvl(wood)} ${wood.toFixed(1)}% แต่ธาตุทอง${lvl(metal)}เพียง ${metal.toFixed(1)}% คุณไอเดียเยอะมากแต่ขาดตัวตัดให้เป็นชิ้นงาน คุณเคยรู้สึกไหมว่าทำหลายอย่างพร้อมกันแต่ไม่เสร็จ? คุณจะรุ่งเมื่องานมีกรอบชัด มี KPI ชัดเจน`;
+if(water>=30) return `ดวงคุณน้ำ${lvl(water)} ${water.toFixed(1)}% เป็นอันดับ 1 ของดวงเลย คุณฉลาด ปรับตัวเก่ง เหมาะกับงานสื่อสาร เดินทาง วิเคราะห์ข้อมูล งานที่ต้องปรับตัวบ่อยๆ`;
+if(fire>=30) return `ดวงคุณไฟ${lvl(fire)} ${fire.toFixed(1)}% เป็นอันดับ 1 เลย คุณโดดเด่น มีเสน่ห์มาก เหมาะกับงานขาย พรีเซนต์ ออกหน้ากล้อง`;
+return `ดวงคุณธาตุ${r.day?.element}เด่น และธาตุ${strongest.k}เป็นธาตุเด่นสุดที่ ${strongest.v.toFixed(1)}% ซึ่งถือว่า${lvl(strongest.v)} คุณเหมาะกับงานที่ใช้จุดแข็งธาตุ${strongest.k}นี้เป็นหลัก`;
 })()}</div></div>
 <div className="mt-6"><div className="font-bold">การเงินของคุณเป็นแบบนี้นะครับ</div><div className="mt-2 text-[13px] leading-[1.8]">{(()=>{
 const earth=r.elementPercent?.earth||0;
